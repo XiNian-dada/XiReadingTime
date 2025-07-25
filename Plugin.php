@@ -4,7 +4,7 @@
  * 
  * @package XiReadingTime
  * @author XiNian_dada
- * @version 1.0.1
+ * @version 1.1.0
  * @link https://www.hairuosky.cn
  * 
  * 该插件在文章内容上方显示预计阅读时间
@@ -84,7 +84,23 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
             _t('阅读时间显示的位置')
         );
         $form->addInput($displayPosition);
+        $marginTop = new Typecho_Widget_Helper_Form_Element_Text(
+            'marginTop',
+            null,
+            '-2em',
+            _t('上边距（margin-top）'),
+            _t('阅读时间框距上方元素的距离，例如：0、1em、-2em')
+        );
+        $form->addInput($marginTop);
         
+        $marginBottom = new Typecho_Widget_Helper_Form_Element_Text(
+            'marginBottom',
+            null,
+            '3em',
+            _t('下边距（margin-bottom）'),
+            _t('阅读时间框距下方元素的距离，例如：1em、3em、0')
+        );
+        $form->addInput($marginBottom);
         $excludedCategories = new Typecho_Widget_Helper_Form_Element_Text(
             'excludedCategories',
             null,
@@ -302,12 +318,15 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         $minutesSize = isset($config->minutesSize) ? $config->minutesSize : '18';
         $borderRadius = isset($config->borderRadius) ? $config->borderRadius : '3';
         $showDetails = isset($config->showDetails) ? $config->showDetails : '1';
-        
+        $marginTop = isset($config->marginTop) ? $config->marginTop : '-2em';
+        $marginBottom = isset($config->marginBottom) ? $config->marginBottom : '1em';        
         // 构建内联样式
         $boxStyle = "font-size: {$fontSize}px;";
         $boxStyle .= "color: {$textColor};";
         $boxStyle .= "border-radius: {$borderRadius}px;";
-        
+        $boxStyle .= "margin-top: {$marginTop};";
+        $boxStyle .= "margin-bottom: {$marginBottom};";
+
         // 根据背景样式应用不同的样式
         switch ($bgStyle) {
             case 'border-left':
