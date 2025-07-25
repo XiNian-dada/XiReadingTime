@@ -1,0 +1,104 @@
+/* 优化版阅读时间插件样式 */
+.reading-time-box {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    margin: 12px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    line-height: 1.4;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+/* 无背景样式特殊处理 */
+.reading-time-box[style*="background-color:transparent"] {
+    padding: 5px 0;
+    margin: 10px 0;
+    box-shadow: none !important;
+}
+
+.reading-time-box:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+/* 无背景时不应用悬停效果 */
+.reading-time-box[style*="background-color:transparent"]:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.reading-time-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.reading-time-box:hover .reading-time-icon {
+    transform: scale(1.1);
+}
+
+.reading-time-text {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.reading-time-minutes {
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.reading-time-box:hover .reading-time-minutes {
+    transform: scale(1.05);
+}
+
+.reading-time-details {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    font-size: 0.85em;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.reading-time-box:hover .reading-time-details {
+    opacity: 1;
+}
+
+.reading-time-words, 
+.reading-time-speed {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    transition: background-color 0.3s ease;
+}
+
+.reading-time-box:hover .reading-time-words,
+.reading-time-box:hover .reading-time-speed {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .reading-time-box {
+        flex-wrap: wrap;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    
+    .reading-time-details {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    /* 移动端无背景样式更紧凑 */
+    .reading-time-box[style*="background-color:transparent"] {
+        padding: 3px 0;
+        margin: 8px 0;
+    }
+}
