@@ -4,10 +4,10 @@
  * 
  * @package XiReadingTime
  * @author XiNian_dada
- * @version 1.1.0
+ * @version 1.2.0
  * @link https://www.hairuosky.cn
  * 
- * 该插件在文章内容上方显示预计阅读时间
+ * 该插件在文章内容上方显示预计阅读时间，支持自动适应主题颜色模式
  */
 class XiReadingTime_Plugin implements Typecho_Plugin_Interface
 {
@@ -84,6 +84,7 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
             _t('阅读时间显示的位置')
         );
         $form->addInput($displayPosition);
+        
         $marginTop = new Typecho_Widget_Helper_Form_Element_Text(
             'marginTop',
             null,
@@ -101,6 +102,7 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
             _t('阅读时间框距下方元素的距离，例如：1em、3em、0')
         );
         $form->addInput($marginBottom);
+        
         $excludedCategories = new Typecho_Widget_Helper_Form_Element_Text(
             'excludedCategories',
             null,
@@ -111,8 +113,25 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         $form->addInput($excludedCategories);
         
         $layout = new Typecho_Widget_Helper_Layout();
-        $layout->html(_t('<h3>样式设置:</h3><hr>'));
+        $layout->html(_t('<h3>颜色模式设置:</h3><hr>'));
         $form->addItem($layout);
+        
+        // 新增：颜色模式选择
+        $colorMode = new Typecho_Widget_Helper_Form_Element_Radio(
+            'colorMode',
+            array(
+                'auto' => _t('自动适应主题'),
+                'fixed' => _t('固定颜色')
+            ),
+            'auto',
+            _t('颜色模式'),
+            _t('选择自动适应主题颜色或使用固定颜色')
+        );
+        $form->addInput($colorMode);
+        
+        $layout2 = new Typecho_Widget_Helper_Layout();
+        $layout2->html(_t('<h3>样式设置:</h3><hr><p><em>注意：当选择"自动适应主题"时，以下颜色设置将作为备用方案</em></p>'));
+        $form->addItem($layout2);
         
         // 背景样式
         $bgStyle = new Typecho_Widget_Helper_Form_Element_Radio(
@@ -274,10 +293,6 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         if (!$config || !isset($config->readingSpeed)) {
             return $content;
         }
-        // 如果配置未初始化，使用默认值
-        if (!$config) {
-            return $content;
-        }
         
         // 安全获取配置值
         $readingSpeed = isset($config->readingSpeed) ? intval($config->readingSpeed) : 250;
@@ -285,6 +300,7 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         $suffixText = isset($config->suffixText) ? $config->suffixText : '分钟';
         $displayPosition = isset($config->displayPosition) ? $config->displayPosition : 'before';
         $excludedCategories = isset($config->excludedCategories) ? $config->excludedCategories : '';
+        $colorMode = isset($config->colorMode) ? $config->colorMode : 'auto';
         
         // 检查是否在排除的分类中
         $excludedCats = [];
@@ -300,12 +316,71 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         }
         
         // 计算阅读时间
-        $readingSpeed = $readingSpeed ?: 250; // 默认250字/分钟
+        $readingSpeed = $readingSpeed ?: 250;
         $cleanContent = self::cleanContent($content);
         $wordCount = mb_strlen($cleanContent, 'UTF-8');
         $readingTime = ceil($wordCount / $readingSpeed);
-        $readingTime = max(1, $readingTime); // 至少1分钟
+        $readingTime = max(1, $readingTime);
         
+        // 构建阅读时间HTML
+        if ($colorMode === 'auto') {
+            $html = self::buildAutoAdaptiveHTML($config, $readingTime, $wordCount, $readingSpeed, $prefixText, $suffixText);
+        } else {
+            $html = self::buildFixedColorHTML($config, $readingTime, $wordCount, $readingSpeed, $prefixText, $suffixText);
+        }
+        
+        // 根据配置决定插入位置
+        if ($displayPosition === 'before') {
+            return $html . $content;
+        } else {
+            return $content . $html;
+        }
+    }
+
+    /**
+     * 构建自适应颜色的HTML
+     */
+    private static function buildAutoAdaptiveHTML($config, $readingTime, $wordCount, $readingSpeed, $prefixText, $suffixText)
+    {
+        $bgStyle = isset($config->bgStyle) ? $config->bgStyle : 'border-left';
+        $fontSize = isset($config->fontSize) ? $config->fontSize : '14';
+        $minutesSize = isset($config->minutesSize) ? $config->minutesSize : '18';
+        $borderRadius = isset($config->borderRadius) ? $config->borderRadius : '3';
+        $showDetails = isset($config->showDetails) ? $config->showDetails : '1';
+        $marginTop = isset($config->marginTop) ? $config->marginTop : '-2em';
+        $marginBottom = isset($config->marginBottom) ? $config->marginBottom : '3em';
+        
+        // 使用CSS类而不是内联样式，让CSS处理颜色适应
+        $classes = 'reading-time-box reading-time-auto';
+        $classes .= ' reading-time-' . $bgStyle;
+        
+        $basicStyle = "font-size: {$fontSize}px; border-radius: {$borderRadius}px; margin-top: {$marginTop}; margin-bottom: {$marginBottom};";
+        
+        $html = '<div class="' . $classes . '" style="' . $basicStyle . '">';
+        $html .= '<span class="reading-time-icon">⏱</span>';
+        $html .= '<div class="reading-time-text">';
+        $html .= htmlspecialchars($prefixText);
+        $html .= ' <span class="reading-time-minutes" style="font-size:' . $minutesSize . 'px">' . $readingTime . '</span> ';
+        $html .= htmlspecialchars($suffixText);
+        $html .= '</div>';
+        
+        if ($showDetails) {
+            $html .= '<div class="reading-time-details">';
+            $html .= '<span class="reading-time-words">' . $wordCount . ' 字</span>';
+            $html .= '<span class="reading-time-speed">' . $readingSpeed . ' 字/分</span>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+        
+        return $html;
+    }
+
+    /**
+     * 构建固定颜色的HTML（原来的逻辑）
+     */
+    private static function buildFixedColorHTML($config, $readingTime, $wordCount, $readingSpeed, $prefixText, $suffixText)
+    {
         // 安全获取样式配置
         $bgStyle = isset($config->bgStyle) ? $config->bgStyle : 'border-left';
         $bgColor = isset($config->bgColor) ? $config->bgColor : '#f8f9fa';
@@ -319,7 +394,8 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         $borderRadius = isset($config->borderRadius) ? $config->borderRadius : '3';
         $showDetails = isset($config->showDetails) ? $config->showDetails : '1';
         $marginTop = isset($config->marginTop) ? $config->marginTop : '-2em';
-        $marginBottom = isset($config->marginBottom) ? $config->marginBottom : '1em';        
+        $marginBottom = isset($config->marginBottom) ? $config->marginBottom : '3em';        
+        
         // 构建内联样式
         $boxStyle = "font-size: {$fontSize}px;";
         $boxStyle .= "color: {$textColor};";
@@ -347,7 +423,7 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         }
         
         // 构建阅读时间HTML
-        $html = '<div class="reading-time-box" style="'.$boxStyle.'">';
+        $html = '<div class="reading-time-box reading-time-fixed" style="'.$boxStyle.'">';
         $html .= '<span class="reading-time-icon" style="color:'.$iconColor.'">⏱</span>';
         $html .= '<div class="reading-time-text">';
         $html .= htmlspecialchars($prefixText);
@@ -365,12 +441,7 @@ class XiReadingTime_Plugin implements Typecho_Plugin_Interface
         
         $html .= '</div>';
         
-        // 根据配置决定插入位置
-        if ($displayPosition === 'before') {
-            return $html . $content;
-        } else {
-            return $content . $html;
-        }
+        return $html;
     }
 
     /**

@@ -1,4 +1,6 @@
-/* 优化版阅读时间插件样式 */
+/* 优化版阅读时间插件样式 - 支持自动适应主题颜色 */
+
+/* ===== 基础样式 ===== */
 .reading-time-box {
     display: flex;
     align-items: center;
@@ -11,22 +13,9 @@
     transition: all 0.3s ease;
 }
 
-/* 无背景样式特殊处理 */
-.reading-time-box[style*="background-color:transparent"] {
-    padding: 5px 0;
-    margin: 10px 0;
-    box-shadow: none !important;
-}
-
 .reading-time-box:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transform: translateY(-1px);
-}
-
-/* 无背景时不应用悬停效果 */
-.reading-time-box[style*="background-color:transparent"]:hover {
-    transform: none;
-    box-shadow: none;
 }
 
 .reading-time-icon {
@@ -70,19 +59,336 @@
 
 .reading-time-words, 
 .reading-time-speed {
-    background-color: rgba(0, 0, 0, 0.05);
     padding: 2px 6px;
     border-radius: 3px;
     white-space: nowrap;
     transition: background-color 0.3s ease;
 }
 
-.reading-time-box:hover .reading-time-words,
-.reading-time-box:hover .reading-time-speed {
+/* ===== 自动适应主题颜色模式 ===== */
+.reading-time-auto {
+    /* 使用常见的CSS变量，如果主题不支持则回退到默认颜色 */
+    color: var(--text-color, var(--color-text, var(--main-text-color, inherit)));
+    background: linear-gradient(135deg, 
+        var(--background-color-secondary, var(--bg-color-secondary, var(--card-bg, rgba(74, 144, 226, 0.08)))),
+        var(--background-color-secondary, var(--bg-color-secondary, var(--card-bg, rgba(74, 144, 226, 0.12))))
+    );
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.2)));
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加微妙的光效 */
+.reading-time-auto::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.1))), 
+        transparent
+    );
+    transition: left 0.8s ease;
+}
+
+.reading-time-auto:hover::before {
+    left: 100%;
+}
+
+/* 自动适应模式下的图标和分钟数颜色 */
+.reading-time-auto .reading-time-icon {
+    color: var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
+    filter: drop-shadow(0 0 3px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.3))));
+    text-shadow: 0 0 8px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.4)));
+}
+
+.reading-time-auto .reading-time-minutes {
+    color: var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
+    font-weight: 600;
+    text-shadow: 0 1px 2px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2)));
+    background: linear-gradient(135deg, 
+        var(--link-color, var(--primary-color, #4a90e2)), 
+        var(--link-color, var(--primary-color, #357abd))
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 自动适应模式下的详细信息颜色 */
+.reading-time-auto .reading-time-details {
+    color: var(--text-color-secondary, var(--color-text-muted, var(--secondary-text-color, inherit)));
+    font-weight: 500;
+}
+
+/* 自动适应模式下的详细信息背景 */
+.reading-time-auto .reading-time-words,
+.reading-time-auto .reading-time-speed {
+    background: linear-gradient(135deg,
+        var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.12))),
+        var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.18)))
+    );
+    border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.15)));
+    backdrop-filter: blur(5px);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.reading-time-auto:hover .reading-time-words,
+.reading-time-auto:hover .reading-time-speed {
+    background: linear-gradient(135deg,
+        var(--background-color-hover, var(--bg-color-hover, rgba(74, 144, 226, 0.18))),
+        var(--background-color-hover, var(--bg-color-hover, rgba(74, 144, 226, 0.25)))
+    );
+    border-color: var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.3)));
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2)));
+}
+
+/* ===== 不同背景样式的自动适应 ===== */
+
+/* 左侧边框样式 */
+.reading-time-auto.reading-time-border-left {
+    border-left: 4px solid var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
+    border-left-style: solid;
+    background: linear-gradient(90deg, 
+        var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.08))),
+        var(--background-color-secondary, var(--bg-color-secondary, rgba(74, 144, 226, 0.04)))
+    );
+    position: relative;
+}
+
+.reading-time-auto.reading-time-border-left::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg,
+        var(--link-color, var(--primary-color, #4a90e2)),
+        var(--link-color, var(--primary-color, #357abd)),
+        var(--link-color, var(--primary-color, #4a90e2))
+    );
+    box-shadow: 0 0 8px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.5)));
+}
+
+/* 实心边框样式 */
+.reading-time-auto.reading-time-solid-border {
+    border: 2px solid var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
+    background: linear-gradient(135deg,
+        var(--background-color-secondary, var(--bg-color-secondary, rgba(74, 144, 226, 0.05))),
+        var(--background-color-secondary, var(--bg-color-secondary, rgba(74, 144, 226, 0.1)))
+    );
+    box-shadow: 
+        0 0 0 1px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.1))),
+        0 4px 12px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.15)));
+}
+
+.reading-time-auto.reading-time-solid-border:hover {
+    border-color: var(--link-color, var(--primary-color, #357abd));
+    box-shadow: 
+        0 0 0 1px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2))),
+        0 6px 20px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.25)));
+}
+
+/* 完整背景样式 */
+.reading-time-auto.reading-time-full-bg {
+    background: linear-gradient(135deg,
+        var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.1))),
+        var(--background-color-secondary, var(--bg-color-secondary, rgba(74, 144, 226, 0.15)))
+    );
+    border: 1px solid var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2)));
+    box-shadow: 
+        inset 0 1px 0 var(--link-color, var(--primary-color, rgba(255, 255, 255, 0.1))),
+        0 4px 12px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.15)));
+}
+
+/* 无背景样式 */
+.reading-time-auto.reading-time-none {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    padding: 5px 0;
+    margin: 10px 0;
+}
+
+.reading-time-auto.reading-time-none::before {
+    display: none;
+}
+
+.reading-time-auto.reading-time-none:hover {
+    transform: none;
+    box-shadow: none !important;
+}
+
+.reading-time-auto.reading-time-none .reading-time-icon {
+    filter: none;
+    text-shadow: none;
+}
+
+.reading-time-auto.reading-time-none .reading-time-minutes {
+    text-shadow: none;
+}
+
+.reading-time-auto.reading-time-none .reading-time-words,
+.reading-time-auto.reading-time-none .reading-time-speed {
+    background: var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.1)));
+    border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.15)));
+}
+
+/* ===== 暗色模式特殊处理 ===== */
+/* 检测暗色模式的几种常见方式 */
+@media (prefers-color-scheme: dark) {
+    .reading-time-auto {
+        /* 暗色模式下使用更深邃的配色 */
+        color: var(--text-color, var(--color-text, #e8eaed));
+        background: linear-gradient(135deg, 
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(64, 156, 255, 0.08))),
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(64, 156, 255, 0.12)))
+        );
+        border-color: var(--border-color, var(--color-border, rgba(64, 156, 255, 0.25)));
+    }
+    
+    .reading-time-auto .reading-time-icon {
+        color: var(--link-color, var(--primary-color, #64a8ff));
+        filter: drop-shadow(0 0 4px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.4))));
+        text-shadow: 0 0 10px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.5)));
+    }
+    
+    .reading-time-auto .reading-time-minutes {
+        color: var(--link-color, var(--primary-color, #64a8ff));
+        background: linear-gradient(135deg, 
+            var(--link-color, var(--primary-color, #64a8ff)), 
+            var(--link-color, var(--primary-color, #4285f4))
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .reading-time-auto .reading-time-details {
+        color: var(--text-color-secondary, var(--color-text-muted, #9aa0a6));
+    }
+    
+    .reading-time-auto .reading-time-words,
+    .reading-time-auto .reading-time-speed {
+        background: linear-gradient(135deg,
+            var(--background-color-tertiary, var(--bg-color-tertiary, rgba(100, 168, 255, 0.12))),
+            var(--background-color-tertiary, var(--bg-color-tertiary, rgba(100, 168, 255, 0.18)))
+        );
+        border-color: var(--border-color, var(--color-border, rgba(100, 168, 255, 0.2)));
+    }
+
+    .reading-time-auto:hover .reading-time-words,
+    .reading-time-auto:hover .reading-time-speed {
+        background: linear-gradient(135deg,
+            var(--background-color-hover, var(--bg-color-hover, rgba(100, 168, 255, 0.18))),
+            var(--background-color-hover, var(--bg-color-hover, rgba(100, 168, 255, 0.28)))
+        );
+        box-shadow: 0 2px 8px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.25)));
+    }
+
+    /* 暗色模式下的不同背景样式 */
+    .reading-time-auto.reading-time-border-left {
+        background: linear-gradient(90deg, 
+            var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.1))),
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(100, 168, 255, 0.05)))
+        );
+        border-left-color: var(--link-color, var(--primary-color, #64a8ff));
+    }
+
+    .reading-time-auto.reading-time-border-left::after {
+        background: linear-gradient(180deg,
+            var(--link-color, var(--primary-color, #64a8ff)),
+            var(--link-color, var(--primary-color, #4285f4)),
+            var(--link-color, var(--primary-color, #64a8ff))
+        );
+        box-shadow: 0 0 12px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.6)));
+    }
+
+    .reading-time-auto.reading-time-solid-border {
+        border-color: var(--link-color, var(--primary-color, #64a8ff));
+        background: linear-gradient(135deg,
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(100, 168, 255, 0.06))),
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(100, 168, 255, 0.12)))
+        );
+        box-shadow: 
+            0 0 0 1px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.15))),
+            0 4px 12px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.2)));
+    }
+
+    .reading-time-auto.reading-time-full-bg {
+        background: linear-gradient(135deg,
+            var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.12))),
+            var(--background-color-secondary, var(--bg-color-secondary, rgba(100, 168, 255, 0.18)))
+        );
+        border-color: var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.25)));
+        box-shadow: 
+            inset 0 1px 0 var(--link-color, var(--primary-color, rgba(255, 255, 255, 0.05))),
+            0 4px 12px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.2)));
+    }
+}
+
+/* 通过body类名检测暗色模式 */
+body.dark .reading-time-auto,
+body.dark-mode .reading-time-auto,
+body.theme-dark .reading-time-auto,
+.dark .reading-time-auto,
+[data-theme="dark"] .reading-time-auto {
+    color: var(--text-color, var(--color-text, #e0e0e0));
+    background-color: var(--background-color-secondary, var(--bg-color-secondary, rgba(255, 255, 255, 0.05)));
+}
+
+body.dark .reading-time-auto .reading-time-details,
+body.dark-mode .reading-time-auto .reading-time-details,
+body.theme-dark .reading-time-auto .reading-time-details,
+.dark .reading-time-auto .reading-time-details,
+[data-theme="dark"] .reading-time-auto .reading-time-details {
+    color: var(--text-color-secondary, var(--color-text-muted, #a0a0a0));
+}
+
+body.dark .reading-time-auto .reading-time-words,
+body.dark .reading-time-auto .reading-time-speed,
+body.dark-mode .reading-time-auto .reading-time-words,
+body.dark-mode .reading-time-auto .reading-time-speed,
+body.theme-dark .reading-time-auto .reading-time-words,
+body.theme-dark .reading-time-auto .reading-time-speed,
+.dark .reading-time-auto .reading-time-words,
+.dark .reading-time-auto .reading-time-speed,
+[data-theme="dark"] .reading-time-auto .reading-time-words,
+[data-theme="dark"] .reading-time-auto .reading-time-speed {
+    background-color: var(--background-color-tertiary, var(--bg-color-tertiary, rgba(255, 255, 255, 0.08)));
+}
+
+/* ===== 固定颜色模式保持原样 ===== */
+.reading-time-fixed[style*="background-color:transparent"] {
+    padding: 5px 0;
+    margin: 10px 0;
+    box-shadow: none !important;
+}
+
+.reading-time-fixed[style*="background-color:transparent"]:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.reading-time-fixed .reading-time-words,
+.reading-time-fixed .reading-time-speed {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.reading-time-fixed:hover .reading-time-words,
+.reading-time-fixed:hover .reading-time-speed {
     background-color: rgba(0, 0, 0, 0.08);
 }
 
-/* 响应式调整 */
+/* ===== 响应式调整 ===== */
 @media (max-width: 768px) {
     .reading-time-box {
         flex-wrap: wrap;
@@ -97,7 +403,8 @@
     }
     
     /* 移动端无背景样式更紧凑 */
-    .reading-time-box[style*="background-color:transparent"] {
+    .reading-time-box[style*="background-color:transparent"],
+    .reading-time-auto.reading-time-none {
         padding: 3px 0;
         margin: 8px 0;
     }
