@@ -68,11 +68,11 @@
 /* ===== 自动适应主题颜色模式 ===== */
 .reading-time-auto {
     /* 使用常见的CSS变量，如果主题不支持则回退到默认颜色 */
-    color: var(--text-color, var(--color-text, var(--main-text-color, inherit)));
+    color: var(--text-color, var(--color-text, var(--main-text-color, inherit))) !important;
     background: linear-gradient(135deg, 
         var(--background-color-secondary, var(--bg-color-secondary, var(--card-bg, rgba(74, 144, 226, 0.08)))),
         var(--background-color-secondary, var(--bg-color-secondary, var(--card-bg, rgba(74, 144, 226, 0.12))))
-    );
+    )!important;
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.2)));
     position: relative;
@@ -121,7 +121,7 @@
 
 /* 自动适应模式下的详细信息颜色 */
 .reading-time-auto .reading-time-details {
-    color: var(--text-color-secondary, var(--color-text-muted, var(--secondary-text-color, inherit)));
+    color: var(--text-color-secondary, var(--color-text-muted, var(--secondary-text-color, inherit)))!important;
     font-weight: 500;
 }
 
@@ -131,7 +131,7 @@
     background: linear-gradient(135deg,
         var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.12))),
         var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.18)))
-    );
+    )!important;
     border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.15)));
     backdrop-filter: blur(5px);
     font-weight: 500;
