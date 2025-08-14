@@ -1,4 +1,4 @@
-/* 1.2.0优化版阅读时间插件样式 - 支持自动适应主题颜色 */
+/* 1.3.0优化版阅读时间插件样式 - 支持自动适应主题颜色 */
 
 /* ===== 基础样式 ===== */
 .reading-time-box {
@@ -58,6 +58,7 @@
 }
 
 .reading-time-words, 
+.reading-time-images,
 .reading-time-speed {
     padding: 2px 6px;
     border-radius: 3px;
@@ -99,24 +100,23 @@
     left: 100%;
 }
 
-/* 自动适应模式下的图标和分钟数颜色 */
+/* 自动适应模式下的图标和分钟数颜色 - 修复透明问题 */
 .reading-time-auto .reading-time-icon {
     color: var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
     filter: drop-shadow(0 0 3px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.3))));
     text-shadow: 0 0 8px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.4)));
 }
 
+/* 修复分钟数透明问题 - 使用实色而非渐变文字 */
 .reading-time-auto .reading-time-minutes {
-    color: var(--link-color, var(--primary-color, var(--accent-color, #4a90e2)));
+    color: var(--link-color, var(--primary-color, var(--accent-color, #4a90e2))) !important;
     font-weight: 600;
     text-shadow: 0 1px 2px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2)));
-    background: linear-gradient(135deg, 
-        var(--link-color, var(--primary-color, #4a90e2)), 
-        var(--link-color, var(--primary-color, #357abd))
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    /* 移除渐变文字效果，改用实色 */
+    -webkit-text-fill-color: initial !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
 }
 
 /* 自动适应模式下的详细信息颜色 */
@@ -127,6 +127,7 @@
 
 /* 自动适应模式下的详细信息背景 */
 .reading-time-auto .reading-time-words,
+.reading-time-auto .reading-time-images,
 .reading-time-auto .reading-time-speed {
     background: linear-gradient(135deg,
         var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.12))),
@@ -139,14 +140,24 @@
 }
 
 .reading-time-auto:hover .reading-time-words,
+.reading-time-auto:hover .reading-time-images,
 .reading-time-auto:hover .reading-time-speed {
     background: linear-gradient(135deg,
         var(--background-color-hover, var(--bg-color-hover, rgba(74, 144, 226, 0.18))),
         var(--background-color-hover, var(--bg-color-hover, rgba(74, 144, 226, 0.25)))
-    );
+    ) !important;
     border-color: var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.3)));
     transform: translateY(-1px);
     box-shadow: 0 2px 8px var(--link-color, var(--primary-color, rgba(74, 144, 226, 0.2)));
+}
+
+/* 图片计数特殊样式 */
+.reading-time-images {
+    background: linear-gradient(135deg,
+        var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.12))),
+        var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.18)))
+    )!important;
+    border-color: var(--border-color, var(--color-border, rgba(74, 144, 226, 0.15))) !important;
 }
 
 /* ===== 不同背景样式的自动适应 ===== */
@@ -237,6 +248,7 @@
 }
 
 .reading-time-auto.reading-time-none .reading-time-words,
+.reading-time-auto.reading-time-none .reading-time-images,
 .reading-time-auto.reading-time-none .reading-time-speed {
     background: var(--background-color-tertiary, var(--bg-color-tertiary, rgba(74, 144, 226, 0.1)));
     border: 1px solid var(--border-color, var(--color-border, rgba(74, 144, 226, 0.15)));
@@ -261,15 +273,12 @@
         text-shadow: 0 0 10px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.5)));
     }
     
+    /* 暗色模式下的分钟数 - 确保可见 */
     .reading-time-auto .reading-time-minutes {
-        color: var(--link-color, var(--primary-color, #64a8ff));
-        background: linear-gradient(135deg, 
-            var(--link-color, var(--primary-color, #64a8ff)), 
-            var(--link-color, var(--primary-color, #4285f4))
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: var(--link-color, var(--primary-color, #64a8ff)) !important;
+        -webkit-text-fill-color: initial !important;
+        background: none !important;
+        text-shadow: 0 0 3px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.3)));
     }
     
     .reading-time-auto .reading-time-details {
@@ -277,6 +286,7 @@
     }
     
     .reading-time-auto .reading-time-words,
+    .reading-time-auto .reading-time-images,
     .reading-time-auto .reading-time-speed {
         background: linear-gradient(135deg,
             var(--background-color-tertiary, var(--bg-color-tertiary, rgba(100, 168, 255, 0.12))),
@@ -286,6 +296,7 @@
     }
 
     .reading-time-auto:hover .reading-time-words,
+    .reading-time-auto:hover .reading-time-images,
     .reading-time-auto:hover .reading-time-speed {
         background: linear-gradient(135deg,
             var(--background-color-hover, var(--bg-color-hover, rgba(100, 168, 255, 0.18))),
@@ -333,6 +344,15 @@
             inset 0 1px 0 var(--link-color, var(--primary-color, rgba(255, 255, 255, 0.05))),
             0 4px 12px var(--link-color, var(--primary-color, rgba(100, 168, 255, 0.2)));
     }
+    
+    /* 暗色模式下的图片计数 */
+    .reading-time-auto .reading-time-images {
+        background: linear-gradient(135deg,
+            rgba(255, 193, 7, 0.12),
+            rgba(255, 193, 7, 0.18)
+        ) !important;
+        border-color: rgba(255, 193, 7, 0.2) !important;
+    }
 }
 
 /* 通过body类名检测暗色模式 */
@@ -345,6 +365,16 @@ body.theme-dark .reading-time-auto,
     background-color: var(--background-color-secondary, var(--bg-color-secondary, rgba(255, 255, 255, 0.05)));
 }
 
+/* 确保暗色模式下分钟数可见 */
+body.dark .reading-time-auto .reading-time-minutes,
+body.dark-mode .reading-time-auto .reading-time-minutes,
+body.theme-dark .reading-time-auto .reading-time-minutes,
+.dark .reading-time-auto .reading-time-minutes,
+[data-theme="dark"] .reading-time-auto .reading-time-minutes {
+    color: var(--link-color, var(--primary-color, #64a8ff)) !important;
+    -webkit-text-fill-color: initial !important;
+}
+
 body.dark .reading-time-auto .reading-time-details,
 body.dark-mode .reading-time-auto .reading-time-details,
 body.theme-dark .reading-time-auto .reading-time-details,
@@ -354,14 +384,19 @@ body.theme-dark .reading-time-auto .reading-time-details,
 }
 
 body.dark .reading-time-auto .reading-time-words,
+body.dark .reading-time-auto .reading-time-images,
 body.dark .reading-time-auto .reading-time-speed,
 body.dark-mode .reading-time-auto .reading-time-words,
+body.dark-mode .reading-time-auto .reading-time-images,
 body.dark-mode .reading-time-auto .reading-time-speed,
 body.theme-dark .reading-time-auto .reading-time-words,
+body.theme-dark .reading-time-auto .reading-time-images,
 body.theme-dark .reading-time-auto .reading-time-speed,
 .dark .reading-time-auto .reading-time-words,
+.dark .reading-time-auto .reading-time-images,
 .dark .reading-time-auto .reading-time-speed,
 [data-theme="dark"] .reading-time-auto .reading-time-words,
+[data-theme="dark"] .reading-time-auto .reading-time-images,
 [data-theme="dark"] .reading-time-auto .reading-time-speed {
     background-color: var(--background-color-tertiary, var(--bg-color-tertiary, rgba(255, 255, 255, 0.08)));
 }
@@ -379,13 +414,24 @@ body.theme-dark .reading-time-auto .reading-time-speed,
 }
 
 .reading-time-fixed .reading-time-words,
+.reading-time-fixed .reading-time-images,
 .reading-time-fixed .reading-time-speed {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
 .reading-time-fixed:hover .reading-time-words,
+.reading-time-fixed:hover .reading-time-images,
 .reading-time-fixed:hover .reading-time-speed {
     background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* 固定颜色模式的图片计数 */
+.reading-time-fixed .reading-time-images {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.reading-time-fixed:hover .reading-time-images {
+    background-color: rgba(255, 193, 7, 0.15);
 }
 
 /* ===== 响应式调整 ===== */
