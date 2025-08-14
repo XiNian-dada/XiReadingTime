@@ -4,7 +4,7 @@
  * 
  * @package XiReadingTime
  * @author XiNian_dada
- * @version 1.3.0
+ * @version 1.4.0
  * @link https://leeinx.com
  * 
  * 该插件在文章内容上方显示预计阅读时间，支持自动适应主题颜色模式
